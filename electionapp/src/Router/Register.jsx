@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { adminRegister } from "../Redux/actions";
+import { signUp } from "../Redux/AuthReducer/action";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -19,6 +19,7 @@ class Register extends Component {
       name: "",
       email: "",
       password: "",
+      city: ""
     };
   }
   handleChange = (e) => {
@@ -30,15 +31,16 @@ class Register extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { name, email, password } = this.state;
-    this.props.adminRegister({
+    const { name, email, password, city } = this.state;
+    this.props.signUpRequest({
       name,
       email,
       password,
+      city
     });
   };
   render() {
-    const { name, email, password } = this.state;
+    const { name, email, password, city } = this.state;
     console.log(this.props);
     const { regSuccess, regError } = this.props;
     console.log(regSuccess, regError);
@@ -96,6 +98,20 @@ class Register extends Component {
                     onChange={this.handleChange}
                   />
                 </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    autoComplete="city"
+                    name="city"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    id="city"
+                    label="city"
+                    value={city}
+                    autoFocus
+                    onChange={this.handleChange}
+                  />
+                </Grid>
               </Grid>
               <br />
               <Button
@@ -131,7 +147,7 @@ const mapStateToProps = (state) => ({
   regSuccess: state.app.regSuccess
 });
 const mapDispatchToProps = (dispatch) => ({
-  adminRegister: (payload) => dispatch(adminRegister(payload))
+  signUpRequest: (payload) => dispatch(signUp(payload))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);

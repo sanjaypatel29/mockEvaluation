@@ -1,34 +1,23 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { AdminPanel } from './AdminPanel'
-import { connect } from "react-redux";
+import AdminPanel from './AdminPanel'
+import { useSelector } from 'react-redux';
 
+export default function PrivateRoutes() {
 
-function PrivateRoutes(isAuth) {
-  console.log(isAuth)
+  const { isAuth } = useSelector((state) => state.app);
+  console.log(isAuth);
   return (
     <>
       {
-        isAuth ? (
-          <Route path="/admin" render={() => <AdminPanel />} />
+        !isAuth ? (
+          <Redirect to="/Login" />
         ) : (
-            <Redirect to="/Login" />
+            <Route path="/admin" render={() => <AdminPanel />} />
           )
       }
 
     </>
   );
 
-}
-
-
-
-const mapStateToProps = (state) => ({
-  isAuth: state.isAuth,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PrivateRoutes);
+};

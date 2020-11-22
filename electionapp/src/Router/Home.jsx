@@ -1,56 +1,159 @@
-import React from "react";
-import axios from "axios";
-import { Grid } from "@material-ui/core";
-import { CardSummary } from "../Component/CardSummary";
-
-
-class Home extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            city_data: []
-        }
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { Link } from 'react-router-dom';
+import { Button, FormControl, InputLabel, Select, MenuItem } from '@material-ui/core';
+const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+        padding: '10px'
+    },
+    paper: {
+        padding: '20px 20px 20px 20px',
+        width: '90%',
+        paddingBottom: '60px',
+        borderRadius: '15px',
+        background: '#fafdff',
+        alignItems: 'center',
+        boxShadow: '20px 20px 64px #dadcde ,-20px -20px 64px #ffffff'
+    },
+    control: {
+        padding: theme.spacing(2)
+    },
+    button: {
+        width: '60%',
+        height: '40px',
+        marginLeft: '-100px',
+        marginTop: '10px',
+    },
+    mainGrid: {
+        marginTop: '40px',
+        marginBottom: '40px'
+    },
+    formControl: {
+        width: '100%'
+    },
+    link: {
+        textDecoration: 'none'
     }
+}));
+export default function Home(props) {
+    const [data, setdata] = useState([]);
+    const [temp, setTemp] = useState([]);
+    const [params, setParams] = useState({ population: '', type: '', city: '', page: 1, perPage: 5 });
+    const classes = useStyles();
+    let totalPages = Math.ceil(temp.length / params.perPage);
+    const array = new Array(totalPages).fill(0);
+    useEffect(
+        () => {
+            axios.get('http://localhost:5000/getcityLists').then((res) => setTemp(res.data.data));
+            axios
+                .get(
+                    `http://localhost:5000/getcityLists?page=${params.page}&limit=${params.perPage}&population=${params.population}&type=${params.type}&city=${params.city}`
+                )
+                .then((res) => setdata(res.data.data));
+        },
+        [params.city, params.page, params.perPage, params.population, params.type]
+    );
+    const handleChange = (e) => {
+        setParams({ ...params, [e.target.name]: e.target.value });
+    };
+    console.log(data, params);
+    return (
+        <Grid container className={classes.root} spacing={2} justify="center">
+            <Grid item container lg={12} className={classes.mainGrid}>
+                <Grid item container lg={3}></Grid>
+                <Grid item container lg={6}>
+                    <Grid item container lg={6}>
+                        <Grid container item lg={4} sm={2} xs={2}>
+                            <h4>Sort by Population:</h4>
+                        </Grid>
+                        <Grid container item lg={8} sm={5} xs={10}>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label">Population</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    name="population"
+                                    onChange={handleChange}
+                                    label="population"
+                                    value={params.population}
+                                >
+                                    <MenuItem value="">
+                                        <em>None</em>
+                                    </MenuItem>
 
-    componentDidMount() {
-        axios
-            .get("http://localhost:5000/getallcityLists", {
-            })
-            .then((res) => {
-                console.log(res.city_data)
-                this.setState({
-                    city_data: res.data
-                })
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-    }
-
-    render() {
-        const { city_data } = this.state
-        //  console.log(city_data)
-        return (
-            <>
-                <div>
-                    <div>
-                        <h1 className="mb-4">List of cities</h1>
-                        {city_data &&
-                            city_data.map((item, index) => (
-                                <Grid key={index} city_data={item} style={{ marginLeft: "40%" }}>
-                                    <Grid container spacing={3}>
-                                        <Grid item xl={3} lg={3} md={4} sm={6} xs={12}>
-                                            <CardSummary city={item.city} district={item.district} population={item.population} type={item.type} polls={item.polls} data={city_data} />
-                                        </Grid>
-                                    </Grid>
-                                </Grid>
-                            ))
-                        }
-                    </div>
-                </div >
-            </>
-        );
-    }
+                                    <MenuItem value="asc">Ascending Order</MenuItem>
+                                    <MenuItem value="desc">Descending Order</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    <Grid item container lg={3} />
+                    <Grid item container lg={3}>
+                        <Grid container item lg={4} sm={2} xs={2}>
+                            <h4>Filter:</h4>
+                        </Grid>
+                        <Grid container item lg={8} sm={5} xs={10}>
+                            <FormControl variant="outlined" className={classes.formControl}>
+                                <InputLabel id="demo-simple-select-outlined-label">type</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-outlined-label"
+                                    name="type"
+                                    onChange={handleChange}
+                                    label="type"
+                                    value={params.type}
+                                >
+                                    <MenuItem value="">
+                                        <em>None</em>
+                                    </MenuItem>
+                                    <MenuItem value="metro">metro</MenuItem>
+                                    <MenuItem value="town">town</MenuItem>
+                                    <MenuItem value="village">village</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs={2}></Grid>
+            <Grid item xs={8}>
+                <Grid container justify="center" spacing={2}>
+                    {data.length > 0 ? (
+                        data.map((item) => (
+                            <Grid key={item._id} item lg={12} justify="center">
+                                <Paper className={classes.paper}>
+                                    <h3>District name:{item.city}</h3>
+                                    <h3>No. of Polls:{item.polls.length}</h3>
+                                    <Link to={`dashboard/${item._id}`} className={classes.link}>
+                                        <Button variant="contained" color="dark">
+                                            More Details
+                                            </Button>
+                                    </Link>
+                                </Paper>
+                            </Grid>
+                        ))
+                    ) : null}
+                </Grid>
+                <Grid item container lg={12} justify="center">
+                    {array.map((a, index) => (
+                        <Button
+                            className={classes.mainGrid}
+                            key={index}
+                            value={index + 1}
+                            variant="contained"
+                            style={{ marginLeft: '10px' }}
+                            color="primary"
+                            onClick={(e) => setParams({ ...params, page: index + 1 })}
+                        >
+                            {index + 1}
+                        </Button>
+                    ))}
+                </Grid>
+            </Grid>
+        </Grid>
+    );
 }
 
-export default Home;
+

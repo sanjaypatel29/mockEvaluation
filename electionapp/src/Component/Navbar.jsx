@@ -1,4 +1,3 @@
-
 // import React from 'react'
 import { Link } from 'react-router-dom'
 
@@ -121,7 +120,7 @@ function Navbar(props) {
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6">
-            <Link style={{ color: "white", textDecoration: "none" }} to="/">Polling Manager</Link>
+            <Link style={{ color: "white", textDecoration: "none" }} to="/dashboard">Polling Manager</Link>
           </Typography>
           <IconButton color="inherit">
             <Typography
@@ -163,12 +162,12 @@ function Navbar(props) {
             {
               text: "Dashboard",
               icon: <DashboardIcon />,
-              to: "/"
+              to: "/dashboard"
             },
             {
               text: "Admin Panel",
               icon: <AssignmentIcon />,
-              to: "/Admin"
+              to: "/admin"
             },
           ].map((item) => (
             <ListItem

@@ -5,7 +5,7 @@ import Login from './Login'
 import Register from './Register'
 import PrivateRoutes from "./PrivateRoutes"
 import Home from './Home'
-import cityDetail from './CityDetail'
+import CityDetail from './CityDetail'
 
 
 function Routes() {
@@ -14,9 +14,10 @@ function Routes() {
             <Route path="/" render={() => <Navbar />} />
             <Switch>
                 <Route path="/" exact render={() => <Home />} />
-                <Route path="/Login" render={() => <Login />} />
+                <Route path="/Login" render={(props) => <Login {...props} />} />
                 <Route path="/Register" render={() => <Register />} />
-                <Route path="/{city}" render={() => <cityDetail />} />
+                <Route path="/dashboard" exact render={() => <Home />} />
+                <Route path="/dashboard/:id" exact render={(props) => <CityDetail {...props} />} />
                 <PrivateRoutes />
                 <Route render={() => <div>Error:404 page not found</div>} />
             </Switch>

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom"
-import { adminLogin } from "../Redux/actions";
+import { login } from "../Redux/AuthReducer/action";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -39,82 +39,82 @@ class Login extends Component {
   render() {
     const { email, password } = this.state;
     const { isLoading, loginErr, isAuth } = this.props;
+
+
     return (
       <>
         {
-          !isAuth ? (
-            <Redirect to={{ pathname: "/Login" }} />
-          ) : (
-              <Redirect to={{ pathname: "/DashBoard" }} />
-            )
-        }
+          isAuth ? (
+            <Redirect to={{ pathname: "/admin" }} />
+          ) :
 
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <div>
-            <Avatar style={{ marginLeft: "45%", color: "white", background: "blue" }} >
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
+            <Container component="main" maxWidth="xs">
+              <CssBaseline />
+              <div>
+                <Avatar style={{ marginLeft: "45%", color: "white", background: "blue" }} >
+                  <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                  Sign in
         </Typography>
-            <form noValidate>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                value={email}
-                autoFocus
-                onChange={this.handleChange}
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                value={password}
-                autoComplete="current-password"
-                onChange={this.handleChange}
-              />
-              <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={this.handleSubmit}
-              >
-                Sign In
+                <form noValidate>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    value={email}
+                    autoFocus
+                    onChange={this.handleChange}
+                  />
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    value={password}
+                    autoComplete="current-password"
+                    onChange={this.handleChange}
+                  />
+                  <FormControlLabel
+                    control={<Checkbox value="remember" color="primary" />}
+                    label="Remember me"
+                  />
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleSubmit}
+                  >
+                    Sign In
           </Button>
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
+                  <Grid container>
+                    <Grid item xs>
+                      <Link href="#" variant="body2">
+                        Forgot password?
               </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="http://localhost:3000/Register" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
-            </form>
-          </div>
-          <Box mt={8}>
-          </Box>
-        </Container>
+                    </Grid>
+                    <Grid item>
+                      <Link href="http://localhost:3000/Register" variant="body2">
+                        {"Don't have an account? Sign Up"}
+                      </Link>
+                    </Grid>
+                  </Grid>
+                </form>
+              </div>
+              <Box mt={8}>
+              </Box>
+            </Container>
+        }
         <div>{isLoading && "...LOADING"}</div>
         <div>{loginErr && loginErr}</div>
       </>
@@ -131,7 +131,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  loginRequest: (payload) => dispatch(adminLogin(payload))
+  loginRequest: (payload) => dispatch(login(payload))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
